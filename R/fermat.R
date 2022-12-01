@@ -1,7 +1,7 @@
-library(igraph)
-
 #' @export
-fermatDistance <- setClass("fermatDistance", slots = c(sp="matrix", method="character"))
+fermatDistance <- setClass(
+    "fermatDistance", slots = c(sp = "matrix", method = "character")
+)
 
 
 #' @export
@@ -24,16 +24,24 @@ distance.fermatDistance <- function(object, p_ix, q_ix) {
     object@sp[p_ix, q_ix]
 }
 
-get_fermat_distance <- function(X, method, alpha = 2) {
-    dist_X <- dist(X, method = "minkowski", diag = FALSE, upper = FALSE, p = alpha)
-    G <- graph_from_adjacency_matrix(as.matrix(dist_X), weighted = TRUE)
-    new("fermatDistance", sp = shortest.paths(G), method = method)
+#' @export
+get_fermat_distance <- function(X, method = "full", alpha = 2) {
+    if (!(method %in% c("full", "knn"))) {
+        stop("Method is not available")
+    }
+    dist_matrix <- as.matrix(dist(X, diag = FALSE, upper = FALSE)) ^ alpha
+    if (method == "knn") {
+        k <- as.integer(sqrt(ncol(dist_matrix)))
+        for (i in seq_len(ncol(dist_matrix))) {
+            col_dists <- dist_matrix[, i]
+            min_k_dist <- sort(col_dists)[k + 1]
+            remove_nodes <- dist_matrix[, i] <= min_k_dist
+            dist_matrix[remove_nodes, i] = 0
+        }
+    }
+    g <- igraph::graph_from_adjacency_matrix(dist_matrix, weighted = TRUE)
+    new("fermatDistance", sp = igraph::shortest.paths(g), method = method)
 }
 
-
-X = matrix(rnorm(36),nrow=6)
-fd = get_fermat_distance(X, "l")
-
-
-
-
+# X = matrix(rnorm(36),nrow=6)
+# fd = get_fermat_distance(X, "l")
