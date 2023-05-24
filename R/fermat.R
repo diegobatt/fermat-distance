@@ -26,7 +26,7 @@ distance.fermatDistance <- function(object, p_ix, q_ix) {
 
 #' @export
 get_fermat_distance <- function(X, method = "full", alpha = 2) {
-    if (!(method %in% c("full", "knn"))) {
+    if (!(method %in% c("full", "knn", "landmarks"))) {
         stop("Method is not available")
     }
     dist_matrix <- as.matrix(dist(X, diag = FALSE, upper = FALSE)) ^ alpha
@@ -36,7 +36,7 @@ get_fermat_distance <- function(X, method = "full", alpha = 2) {
             col_dists <- dist_matrix[, i]
             min_k_dist <- sort(col_dists)[k + 1]
             remove_nodes <- dist_matrix[, i] <= min_k_dist
-            dist_matrix[remove_nodes, i] = 0
+            dist_matrix[remove_nodes, i] = Inf
         }
     }
     g <- igraph::graph_from_adjacency_matrix(dist_matrix, weighted = TRUE)
