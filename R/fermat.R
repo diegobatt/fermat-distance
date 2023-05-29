@@ -37,7 +37,8 @@ get_fermat_distance <- function(X, method = "full", alpha = 2, landmarks_frac = 
             col_dists <- dist_matrix[, i]
             min_k_dist <- sort(col_dists)[k + 1]
             remove_nodes <- dist_matrix[, i] > min_k_dist
-            dist_matrix[remove_nodes, i] = Inf
+            # 0 in the edge removes the node
+            dist_matrix[remove_nodes, i] = 0
         }
     }
     g <- igraph::graph_from_adjacency_matrix(dist_matrix, weighted = TRUE, mode="undirected")
@@ -46,11 +47,7 @@ get_fermat_distance <- function(X, method = "full", alpha = 2, landmarks_frac = 
         landmarks_sp <- igraph::shortest.paths(g, v = landmarks_ids)
         sp <- matrix(0, n, n)
         for (i in 1:n) {
-            for (j in (i + 1):n) {
-                if(j > n) break()
-                sp[i, j] <- min(rowSums(landmarks_sp[, c(i, j)]))
-                sp[j, i] <- sp[i, j]
-            }
+            sp[i, ] <- matrixStats::colMins(landmarks_sp[, i] + landmarks_sp)
         }
     } else {
         sp <- igraph::shortest.paths(g)
@@ -62,11 +59,14 @@ get_fermat_distance <- function(X, method = "full", alpha = 2, landmarks_frac = 
 # d = 2
 # X = matrix(rnorm(n*d), nrow=n, ncol=d)
 # start <- Sys.time()
-# fd = get_fermat_distance(X, "full", alpha = 2)
+# fd = get_fermat_distance(X, "full", alpha = 1)
 # print( Sys.time() - start )
 
-# # fd2 = get_fermat_distance(X, "knn", alpha = 1)
 # start <- Sys.time()
-# fd3 = get_fermat_distance(X, "landmarks", alpha = 2, landmarks_frac = 0.1)
+# fd2 = get_fermat_distance(X, "knn", alpha = 1)
+# print( Sys.time() - start )
+
+# start <- Sys.time()
+# fd3 = get_fermat_distance(X, "landmarks", alpha = 1, landmarks_frac = 0.1)
 # print( Sys.time() - start )
 
