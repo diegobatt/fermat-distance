@@ -4,7 +4,12 @@ fermatDistance <- setClass(
 )
 
 #' @export
-as.matrix.fermatDistance <- function(object) {
+distances <- function(object) {
+    UseMethod("distances")
+}
+
+#' @export
+distances.fermatDistance <- function(object) {
     object@sp
 }
 
