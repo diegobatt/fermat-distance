@@ -4,12 +4,7 @@ fermatDistance <- setClass(
 )
 
 #' @export
-distances <- function(object) {
-    UseMethod("distances")
-}
-
-#' @export
-distances.fermatDistance <- function(object) {
+as.matrix.fermatDistance <- function(object) {
     object@sp
 }
 
@@ -24,7 +19,7 @@ distance.fermatDistance <- function(object, p_ix, q_ix) {
 }
 
 #' @export
-get_fermat_distance <- function(X, method = "full", alpha = 2, landmarks_frac = 0.1) {
+fermat_dist <- function(X, method = "full", alpha = 2, landmarks_frac = 0.1) {
     if (!(method %in% c("full", "knn", "landmarks"))) {
         stop("Method is not available")
     }
@@ -54,19 +49,3 @@ get_fermat_distance <- function(X, method = "full", alpha = 2, landmarks_frac = 
     }
     new("fermatDistance", sp = sp, method = method)
 }
-
-# n = 1000
-# d = 2
-# X = matrix(rnorm(n*d), nrow=n, ncol=d)
-# start <- Sys.time()
-# fd = get_fermat_distance(X, "full", alpha = 1)
-# print( Sys.time() - start )
-
-# start <- Sys.time()
-# fd2 = get_fermat_distance(X, "knn", alpha = 1)
-# print( Sys.time() - start )
-
-# start <- Sys.time()
-# fd3 = get_fermat_distance(X, "landmarks", alpha = 1, landmarks_frac = 0.1)
-# print( Sys.time() - start )
-
