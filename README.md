@@ -27,6 +27,8 @@ NOTE: At some point this will be submitted to CRAN.
 An example of using the Fermat distance with synthetic data can be show below:
 
 ```R
+library(fermatdistance)
+
 n <- 100
 d <- 2
 X <- matrix(rnorm(n*d), nrow=n, ncol=d)

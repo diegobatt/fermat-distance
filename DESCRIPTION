@@ -2,7 +2,7 @@ Package: fermatdistance
 Title: Package for computing Fermat distances
 Version: 0.4.0
 Authors@R:
-    person("Diego", "Batt", , "diegobatt@github", role = c("cre", "aut"))
+    person("Diego", "Batt", , "diego.battocchio@outlook.com", role = c("cre", "aut"))
 Description: Computes the Fermat distance, also known as geodesic distance, between points in a cloud.
 License: `use_mit_license()`
 Encoding: UTF-8
